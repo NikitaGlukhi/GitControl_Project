@@ -1,7 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { GetRepositoriesService } from '../services/get.repositories.service';
+import { DataService } from '../services/data.service';
+import { Subject } from 'rxjs';
+import { map, debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import * as compareVersions from 'compare-versions';
-import { CronJob } from 'cron';
 
 @Component({
   selector: 'app-page',
@@ -11,36 +13,90 @@ import { CronJob } from 'cron';
 
 export class Page implements OnInit {
 
-  public requestStatus: boolean = false;
-  public repositories = [];
-  public repoNames: any;
-  private config: any;
+  private keyUp = new Subject<any>();
+  public repositoriesData: any;
   public packagesVersions: any;
 
-  constructor(private repository: GetRepositoriesService) {
-     this.config = this.repository.getConfigurationFile();
-     this.packagesVersions = this.config.recommendedAtValorVersions;
+  constructor(
+    private repository: GetRepositoriesService,
+    private repositoriesDataService: DataService
+  ) {
+    this.packagesVersions = this.repository.getConfigurationFile.recommendedAtValorVersions;
+    this.keyUp
+      .pipe(
+        map(event => {
+          const version = event.event.target.value;
+          const packageName = event.pack;
+          return { version, packageName };
+        }),
+        debounceTime(150),
+        distinctUntilChanged()
+      ).subscribe(text => {
+      this.repositoriesDataService.filterByPackages(text);
+      });
   }
 
   ngOnInit() {
-    this.getRepositoriesNames();
+    this.repositoriesData = this.repositoriesDataService.subject;
   }
 
-  public checkBranch(branchData, branchName) {
-    if (branchData) {
-      return branchName;
-    } else {
-      return '';
+  public filtration(packageName: string, event: any) {
+    this.keyUp.next({ event: event, pack: packageName });
+  }
+
+  public filterByPrivacy(value: string) {
+    this.repositoriesDataService.filterByPrivacyAndBranches(value);
+  }
+
+  public filterBranches(value: string) {
+    this.repositoriesDataService.filterByPrivacyAndBranches(value);
+  }
+
+  public isBranch(path) {
+    if (Object.keys(path).length === 1) {
+      return true;
     }
   }
 
-  public checkValue(branch, item) {
-    if (branch) {
-      if (!branch[item]) {
-        return '(none)';
-      } else {
-        return branch[item];
-      }
+  public getBranch(repository, branchName) {
+    if (repository[branchName]) {
+      return branchName;
+    } else {
+      return null;
+    }
+  }
+
+  public getStyleClassForVersion(path, target) {
+    if (!path) {
+      return true;
+    } else if (!path[target]) {
+      return true;
+    } else if (Page.setVersion(path[target], this.packagesVersions[target])) {
+      return true;
+    }
+  }
+
+  public getStyleClassForText(path, target) {
+    if (!path) {
+      return true;
+    } else if (!path[target]) {
+      return true;
+    }
+  }
+
+  public isNone(path, target) {
+    const master = this.getPackageValue(path.master, target);
+    const development = this.getPackageValue(path.development, target);
+    if(master === '(none)' && development === '(none)') {
+      return true;
+    }
+  }
+
+  public getPackageValue(repository, packageName) {
+    if (!repository) {
+      return '(none)';
+    } if (repository[packageName]) {
+      return repository[packageName];
     } else {
       return '(none)';
     }
@@ -60,24 +116,7 @@ export class Page implements OnInit {
     return result;
   }
 
-  private getRepositoriesNames() {
-    return this.repository.getRepositoryNames()
-      .subscribe(result => {
-        this.repoNames = result;
-        for (let element of this.repoNames) {
-          this.getReposData(element.repoName);
-        }
-      });
-  }
-
-  private getReposData(param) {
-    return this.repository.getAllRepositories(param).subscribe((res) => {
-      console.log(res);
-      this.repositories.push(res);
-    });
-  }
-
-  public setVersion(version, configVersion) {
+  private static setVersion(version, configVersion) {
     if (!!version && version) {
       return (
         compareVersions(

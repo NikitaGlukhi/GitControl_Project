@@ -1,108 +1,45 @@
-.versions_control, .branches_not_found {
-  margin-left: 20px;
-  margin-top: 50px;
-  margin-bottom: 20px;
+.table-position {
+    margin-top: 30px;
+    margin-left: 20px;
+    margin-right: 20px;
 }
-
-.old_version div {
-  font-family: Lucida, sans-serif;
-  font-weight: bold;
-  width: border-box;
-  background-color: #ce0000;
-  color: white;
+caption {
+    caption-side: top;
 }
-
-.publicRepos div {
-  font-family: Lucida, sans-serif;
-  font-weight: bold;
-  background-color: #2750af;
-  color: white;
+th, td {
+    width: 70px;
+    padding: 8px;
 }
-
-.privateRepos div {
-  font-family: Lucida, sans-serif;
-  font-weight: bold;
-  background-color: gray;
-  color: white;
+.table .repository-name {
+    width: 70px;
+    text-align: left;
 }
-
-table {
-  text-align: center;
-  border-collapse: collapse;
-  border: 1px solid black;
+.table .text {
+    position: relative;
 }
-
-th {
-  text-align: center;
-  width: 125px;
-  border-collapse: collapse;
-  border: 1px solid black;
-  white-space: nowrap;
-  overflow: hidden;
-  padding: 8px;
-  text-overflow: ellipsis;
+.table .text span {
+    text-align: center;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    position: absolute;
+    left: 0;
+    right: 0;
 }
-
-td div {
-  text-align: center;
-  width: 126px;
-  border-collapse: collapse;
-  border: 1px solid black;
-  white-space: nowrap;
-  overflow: hidden;
-  padding: 8px;
-  text-overflow: ellipsis
+.text:before {
+    content: '';
+    display: inline-block;
 }
-
-.error_alert {
-  font-weight: bolder;
-  color: #ce0000;
+.select select {
+    width: 100%;
+    color: #495057;
+    height: calc(2.25rem + 2px);
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    background-color: white;
 }
-
-.btn-pos {
-  text-align: center;
-}
-
-.btn-main-properties {
-  border-radius: 2px;
-  border: none;
-  padding: 20px;
-  text-decoration: none;
-  display: inline-block;
-  font-size: 16px;
-  margin: 4px 2px;
-}
-
-.button-get {
-  background-color: #2750af;
-  color: white;
-  cursor: pointer;
-}
-
-.button-get-disabled {
-  background-color: #7fd2ff;
-  color: white;
-  cursor: default;
-}
-
-.button-upd {
-  background-color: #119d00;
-  color: white;
-  cursor: pointer;
-}
-
-.button-upd-disabled {
-  background-color: #59ff5f;
-  color: white;
-  cursor: progress;
-}
-
-.attention-alert {
-  text-align: center;
-  border: 3px solid #810001;
-  background-color: aliceblue;
-  color: #810001;
-  border-radius: 4px;
-  padding: 30px;
-  cursor: default;
+.select select:focus {
+    border-color: #80bdff;
+    outline: 0;
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
 }
