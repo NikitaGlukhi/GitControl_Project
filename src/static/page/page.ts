@@ -19,7 +19,7 @@ export class Page implements OnInit {
 
   constructor(
     private reposService: GetRepositoriesService,
-    private repositoriesDataService: DataService
+    private repositoriesDataService: DataService,
   ) {
     this.keyUp
       .pipe(
@@ -130,6 +130,10 @@ export class Page implements OnInit {
       : minutes < 60 ? result += minutes + ' min'
       : hours < 24 ? result += hours + ' hrs' : result += days + ' d';
     return result;
+  }
+
+  public logOut() {
+    window.location.href = 'http://cf83561e.ngrok.io/repositories2/logout';
   }
 
   private static setVersion(version, configVersion) {
